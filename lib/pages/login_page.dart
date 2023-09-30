@@ -10,9 +10,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
-  TextEditingController senhaController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   String email = '';
-  String senha = '';
+  String password = '';
   bool isObscureText = true;
   bool isRememberMe = false;
 
@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.center,
                     child: TextField(
                       onChanged: (value) => {
-                        senha = value,
+                        password = value,
                       },
                       obscureText: isObscureText,
                       style: const TextStyle(color: Colors.white),
@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                       width: double.infinity,
                       child: TextButton(
                           onPressed: () {
-                            if (email == 'thiago' && senha == '123') {
+                            if (email == 'thiago' && password == '123') {
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(

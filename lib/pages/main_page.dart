@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:trilhaapp/pages/dados_cadastrais.dart';
-import 'package:trilhaapp/pages/pagina1.dart';
-import 'package:trilhaapp/pages/pagina2.dart';
-import 'package:trilhaapp/pages/pagina3.dart';
+import 'package:trilhaapp/pages/card_page.dart';
+import 'package:trilhaapp/pages/image_assets.dart';
+import 'package:trilhaapp/pages/list_view_h.dart';
+import 'package:trilhaapp/pages/list_view_v.dart';
+import 'package:trilhaapp/pages/task_page.dart';
+import 'package:trilhaapp/shared/widgets/custom_drawer.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -23,66 +25,7 @@ class _MainPageState extends State<MainPage> {
           title: const Text("Main Page", style: TextStyle(color: Colors.white)),
           backgroundColor: Colors.purple,
         ),
-        drawer: Drawer(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                    width: double.infinity,
-                    child: const Text("Dados cadastrais"),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const DadosCadastraisPage(
-                                  texto: "Meus Dados",
-                                )));
-                  },
-                ),
-                const SizedBox(height: 10),
-                const Divider(),
-                InkWell(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                    width: double.infinity,
-                    child: const Text("Configurações"),
-                  ),
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
-                const Divider(),
-                InkWell(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                    width: double.infinity,
-                    child: const Text("Termos de uso"),
-                  ),
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
-                const Divider(),
-                InkWell(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                    width: double.infinity,
-                    child: const Text("Privacidade"),
-                  ),
-                  onTap: () {},
-                ),
-              ],
-            ),
-          ),
-        ),
+        drawer: const CustomDrawer(),
         body: Column(
           children: [
             Expanded(
@@ -94,22 +37,29 @@ class _MainPageState extends State<MainPage> {
                   });
                 },
                 children: const [
-                  Pagina1(),
-                  Pagina2(),
-                  Pagina3(),
+                  CardPage(),
+                  ImageAssetsPage(),
+                  ListViewV(),
+                  ListViewH(),
+                  TarefaPage(),
                 ],
               ),
             ),
             BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
                 onTap: (value) => {pageController.jumpToPage(value)},
                 currentIndex: pagePosition,
                 items: const [
                   BottomNavigationBarItem(
-                      label: "Page 1", icon: Icon(Icons.home)),
+                      label: "Home", icon: Icon(Icons.home)),
                   BottomNavigationBarItem(
-                      label: "Page 2", icon: Icon(Icons.add)),
+                      label: "Add", icon: Icon(Icons.add)),
                   BottomNavigationBarItem(
-                      label: "Page 3", icon: Icon(Icons.person)),
+                      label: "Usuário", icon: Icon(Icons.person)),
+                  BottomNavigationBarItem(
+                      label: "Images", icon: Icon(Icons.list)),
+                  BottomNavigationBarItem(
+                      label: "Tarefas", icon: Icon(Icons.task)),
                 ])
           ],
         ),
