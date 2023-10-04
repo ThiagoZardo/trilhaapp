@@ -1,6 +1,9 @@
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:trilhaapp/repositories/languages_repository.dart';
 import 'package:trilhaapp/repositories/level_repository.dart';
+import 'package:trilhaapp/services/app_storage_service.dart';
 import 'package:trilhaapp/shared/widgets/text_label.dart';
 
 class DadosCadastraisPage extends StatefulWidget {
@@ -11,6 +14,8 @@ class DadosCadastraisPage extends StatefulWidget {
 }
 
 class _DadosCadastraisPageState extends State<DadosCadastraisPage> {
+  AppStorageService storage = AppStorageService();
+
   var nameController = TextEditingController(text: "");
 
   var birthDateController = TextEditingController(text: "");
@@ -22,7 +27,7 @@ class _DadosCadastraisPageState extends State<DadosCadastraisPage> {
 
   LanguagesRepository languagesRepository = LanguagesRepository();
   var languages = [];
-  var languagesSelect = [];
+  List<String> languagesSelect = [];
 
   double salaryChosen = 0;
 
@@ -35,6 +40,22 @@ class _DadosCadastraisPageState extends State<DadosCadastraisPage> {
     levels = levelRepository.returnLevels();
     languages = languagesRepository.returnLanguages();
     super.initState();
+    dataChange();
+  }
+
+  void dataChange() async {
+
+    nameController.text = await storage.getRegistrionDataName();
+    birthDateController.text = await storage.getRegistrionDataBirthDate();
+    // if (birthDateController.text.isNotEmpty) {
+    //   birthDate = DateTime.parse(birthDateController.text);
+    // }
+    levelSelect = await storage.getRegistrionDataLevel();
+    languagesSelect = await storage.getRegistrionDataLanguages();
+    timeExperience = await storage.getRegistrionDataTimeExperience();
+    salaryChosen = await storage.getRegistrionDataSalaryChosene();
+
+    setState(() {});
   }
 
   List<DropdownMenuItem<int>> returnItems(int maxQtd) {
@@ -146,7 +167,7 @@ class _DadosCadastraisPageState extends State<DadosCadastraisPage> {
                     },
                   ),
                   TextButton(
-                      onPressed: () {
+                      onPressed: () async {
                         setState(() {
                           save = false;
                         });
@@ -198,10 +219,18 @@ class _DadosCadastraisPageState extends State<DadosCadastraisPage> {
                           );
                           return;
                         }
+                        storage.setRegistrionDataName(nameController.text);
+                        storage.setRegistrionDataBirthDate(birthDateController.toString());
+                        storage.setRegistrionDataLevel(levelSelect);
+                        storage.setRegistrionLanguages(languagesSelect);
+                        storage.setRegistrionDataTimeExperience(timeExperience);
+                        storage.setRegistrionDataSalaryChosen(salaryChosen);
                         setState(() {
                           save = true;
                         });
-                        Future.delayed(const Duration(seconds: 3), () {
+                        Future.delayed(const Duration(seconds: 3), () async {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text('Dados salvos com sucesso')));
                           setState(() {
                             save = false;
                           });
