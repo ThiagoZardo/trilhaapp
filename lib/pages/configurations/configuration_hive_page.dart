@@ -1,24 +1,25 @@
-// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
-import 'package:trilhaapp/services/app_storage_service.dart';
+import 'package:hive/hive.dart';
+import 'package:trilhaapp/model/configuration_model.dart';
+import 'package:trilhaapp/repositories/configurations_repositoriy.dart';
 
-class ConfigurationPage extends StatefulWidget {
-  const ConfigurationPage({super.key});
+class ConfigurationHivePage extends StatefulWidget {
+  const ConfigurationHivePage({super.key});
 
   @override
-  State<ConfigurationPage> createState() => _ConfigurationPageState();
+  State<ConfigurationHivePage> createState() => _ConfigurationPageState();
 }
 
-class _ConfigurationPageState extends State<ConfigurationPage> {
-  AppStorageService storage = AppStorageService();
+class _ConfigurationPageState extends State<ConfigurationHivePage> {
+  late ConfigurationsRepository configurationsRepository;
+  ConfigurationsModel configurationsModel = ConfigurationsModel.empy();
+
   TextEditingController userNameController = TextEditingController();
   TextEditingController heightController  = TextEditingController();
 
-  String? userName;
-  double? height;
-  bool pushNotification = false;
-  bool darkTheme = false;
+  late Box boxRandomNumbers;
 
   @override
   void initState() {
@@ -27,30 +28,26 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   }
 
   changeData() async {
-    setState(() async {
-      userNameController.text = await storage.getRegistrionDataUserName();
-      heightController.text = (await storage.getRegistrionDataUserHeight()).toString();
-      pushNotification = await storage.getRegistrionDataPushNotification();
-      darkTheme = await storage.getRegistrionDataDarkTheme();
-    });
+    configurationsRepository = await ConfigurationsRepository.load();
+    configurationsModel = configurationsRepository.getData();
+
+    userNameController.text = configurationsModel.userName;
+    heightController.text = configurationsModel.height.toString();
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Configurações'),
-        ),
+        appBar: AppBar(title: const Text('Configurações Hive')),
         body: Container(
           child: ListView(
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
-                  decoration: const InputDecoration(
-                    hintText: 'Nome Usuário'
-                  ),
+                  decoration: const InputDecoration(hintText: 'Nome Usuário'),
                   controller: userNameController,
                 ),
               ),
@@ -58,9 +55,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: 'Altura',
-                  ),
+                  decoration: const InputDecoration(hintText: 'Altura'),
                   controller: heightController,
                 ),
               ),
@@ -68,30 +63,25 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                 title: const Text('Receber notificações'),
                 onChanged: (bool value) {
                   setState(() {
-                    pushNotification = !pushNotification;
+                    configurationsModel.pushNotification = value;
                   });
                 },
-                value: pushNotification,
+                value: configurationsModel.pushNotification,
               ),
               SwitchListTile(
                 title: const Text('Tema escuro'),
+                value: configurationsModel.darkTheme,
                 onChanged: (bool value) {
                   setState(() {
-                    darkTheme = !darkTheme;
+                    configurationsModel.darkTheme = value;
                   });
-                },
-                value: darkTheme,
-              ),
+                }),
               TextButton(
                 onPressed: () async {
                   FocusManager.instance.primaryFocus?.unfocus();
-                    storage.setRegistrionDataUserName(userNameController.text);
-                    storage.setRegistrionDataPushNotification(pushNotification);
-                    storage.setRegistrionDataDarkTheme(darkTheme);
                   try {
-                    storage.setRegistrionDataHeight(double.parse(heightController.text));
-                  } catch (error) {
-                    debugPrint('veio pra cá');
+                    configurationsModel.height = double.parse(heightController.text);
+                  } catch (e) {
                     showDialog(
                       context: context,
                       builder: (_) {
@@ -103,14 +93,15 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: const Text('Ok'),
-                            )
+                              child: const Text('Ok'))
                           ],
                         );
-                      }
-                    );
+                      });
                     return;
                   }
+                  configurationsModel.userName = userNameController.text;
+                  configurationsRepository.save(configurationsModel);
+                  setState(() {});
                   Navigator.pop(context);
                 },
                 child: const Text('Salvar')

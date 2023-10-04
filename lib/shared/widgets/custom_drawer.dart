@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trilhaapp/pages/configuration_page.dart';
-import 'package:trilhaapp/pages/random_numbers.dart';
+import 'package:trilhaapp/pages/configurations/configuration_hive_page.dart';
+import 'package:trilhaapp/pages/randomNumbers/random_numbers_hive.dart';
 import 'package:trilhaapp/pages/registrion_data.dart';
 import 'package:trilhaapp/pages/login_page.dart';
 
@@ -121,7 +121,7 @@ class CustomDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (bc) => const RandomNumbersPage()));
+                  builder: (bc) => const RandomNumbersHivePage()));
             },
           ),
           const Divider(),
@@ -141,7 +141,7 @@ class CustomDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (bc) => const ConfigurationPage()));
+                  builder: (bc) => const ConfigurationHivePage()));
             },
           ),
           const Divider(),

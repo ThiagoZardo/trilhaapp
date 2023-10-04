@@ -1,24 +1,19 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trilhaapp/services/app_storage_service.dart';
+import 'package:hive/hive.dart';
 
-class RandomNumbersPage extends StatefulWidget {
-  const RandomNumbersPage({super.key});
+class RandomNumbersHivePage extends StatefulWidget {
+  const RandomNumbersHivePage({super.key});
 
   @override
-  State<RandomNumbersPage> createState() => _RandomNumbersPageState();
+  State<RandomNumbersHivePage> createState() => _RandomNumbersHivePageState();
 }
 
-class _RandomNumbersPageState extends State<RandomNumbersPage> {
+class _RandomNumbersHivePageState extends State<RandomNumbersHivePage> {
+
   int? randomNumber = 0;
   int? qtdClicks = 0;
-  final KEY_RANDOM_NUMBER = 'random_number';
-  final KEY_QTD_CLICKS = 'qtd_clicks';
-  AppStorageService storage = AppStorageService();
+  late Box boxRandomNumbers;
 
   @override
   void initState() {
@@ -27,11 +22,14 @@ class _RandomNumbersPageState extends State<RandomNumbersPage> {
   }
 
   void changeData() async {
-    setState(() async {
-      randomNumber = await storage.getRegistrionDataRandomNumber();
-      qtdClicks = await storage.getRegistrionDataQtdClicks();
-    });
-    debugPrint(randomNumber.toString());
+    if (Hive.isBoxOpen('box_random_numers')) {
+      boxRandomNumbers = Hive.box('box_random_numers');
+    } else {
+      boxRandomNumbers = await Hive.openBox('box_random_numers');
+    }
+    randomNumber = await boxRandomNumbers.get('randomNumber') ?? 0;
+    qtdClicks = await boxRandomNumbers.get('qtdClicks') ?? 0;
+    setState(() {});
   }
 
   @override
@@ -39,7 +37,7 @@ class _RandomNumbersPageState extends State<RandomNumbersPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Gerador de números aleatórios'),
+          title: const Text('Gerador de números aleatórios Hive'),
         ),
         body: Container(
           alignment: Alignment.center,
@@ -61,8 +59,8 @@ class _RandomNumbersPageState extends State<RandomNumbersPage> {
               randomNumber = random.nextInt(1000);
               qtdClicks = qtdClicks! + 1;
             });
-            storage.setRegistrionDataRandomNumber(randomNumber!);
-            storage.setRegistrionDataQtdClicks(qtdClicks!);
+            boxRandomNumbers.put('randomNumber', randomNumber!);
+            boxRandomNumbers.put('qtdClicks', qtdClicks!);
           },
           child: const Icon(Icons.add),
         ),
