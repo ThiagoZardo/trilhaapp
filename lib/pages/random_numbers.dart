@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trilhaapp/services/app_storage_service.dart';
 
 class RandomNumbersPage extends StatefulWidget {
   const RandomNumbersPage({super.key});
@@ -17,7 +18,7 @@ class _RandomNumbersPageState extends State<RandomNumbersPage> {
   int? qtdClicks = 0;
   final KEY_RANDOM_NUMBER = 'random_number';
   final KEY_QTD_CLICKS = 'qtd_clicks';
-  late SharedPreferences storage;
+  AppStorageService storage = AppStorageService();
 
   @override
   void initState() {
@@ -26,10 +27,9 @@ class _RandomNumbersPageState extends State<RandomNumbersPage> {
   }
 
   void changeData() async {
-    storage = await SharedPreferences.getInstance();
-    setState(() {
-      randomNumber = storage.getInt(KEY_RANDOM_NUMBER);
-      qtdClicks = storage.getInt(KEY_QTD_CLICKS);
+    setState(() async {
+      randomNumber = await storage.getRegistrionDataRandomNumber();
+      qtdClicks = await storage.getRegistrionDataQtdClicks();
     });
     debugPrint(randomNumber.toString());
   }
@@ -61,8 +61,8 @@ class _RandomNumbersPageState extends State<RandomNumbersPage> {
               randomNumber = random.nextInt(1000);
               qtdClicks = qtdClicks! + 1;
             });
-            storage.setInt(KEY_RANDOM_NUMBER, randomNumber!);
-            storage.setInt(KEY_QTD_CLICKS, qtdClicks!);
+            storage.setRegistrionDataRandomNumber(randomNumber!);
+            storage.setRegistrionDataQtdClicks(qtdClicks!);
           },
           child: const Icon(Icons.add),
         ),

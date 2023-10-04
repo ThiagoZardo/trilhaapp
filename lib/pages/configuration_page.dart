@@ -20,11 +20,6 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   bool pushNotification = false;
   bool darkTheme = false;
 
-  final KEY_USER_NAME = 'key_user_name';
-  final KEY_HEIGHT = 'key_height';
-  final KEY_PUSH_NOTIFICATION = 'key_push_notification';
-  final KEY_DARK_THEME = 'key_dark_theme';
-
   @override
   void initState() {
     super.initState();

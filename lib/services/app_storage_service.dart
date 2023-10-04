@@ -13,9 +13,27 @@ enum STORAGE_KEYS {
   KEY_HEIGHT,
   KEY_PUSH_NOTIFICATION,
   KEY_DARK_THEME,
+  KEY_RANDOM_NUMBER,
+  KEY_QTD_CLICKS,
 }
 
 class AppStorageService {
+
+  void setRegistrionDataQtdClicks(int value) async {
+    _setInt(STORAGE_KEYS.KEY_QTD_CLICKS.toString(), value);
+  }
+
+  Future<int> getRegistrionDataQtdClicks() async {
+    return _getInt(STORAGE_KEYS.KEY_QTD_CLICKS.toString());
+  }
+
+  void setRegistrionDataRandomNumber(int value) async {
+    _setInt(STORAGE_KEYS.KEY_RANDOM_NUMBER.toString(), value);
+  }
+
+  Future<int> getRegistrionDataRandomNumber() async {
+    return _getInt(STORAGE_KEYS.KEY_RANDOM_NUMBER.toString());
+  }
 
   void setRegistrionDataDarkTheme(bool value) async {
     _setBool(STORAGE_KEYS.KEY_DARK_THEME.toString(), value);
